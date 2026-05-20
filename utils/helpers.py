@@ -15,3 +15,26 @@ def draw_center(screen, text, font, color, y):
 
 def draw_panel(screen, x, y, w, h, color):
     pygame.draw.rect(screen, color, (x, y, w, h), border_radius=18)
+
+def draw_hp_bar(screen, x, y, width, height, current_hp, max_hp):
+
+    ratio = current_hp / max_hp
+
+    pygame.draw.rect(
+        screen,
+        (80, 80, 80),
+        (x, y, width, height)
+    )
+
+    pygame.draw.rect(
+        screen,
+        (40, 220, 40),
+        (x, y, width * ratio, height)
+    )
+
+    pygame.draw.rect(
+        screen,
+        (255, 255, 255),
+        (x, y, width, height),
+        2
+    )
