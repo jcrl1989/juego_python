@@ -373,7 +373,7 @@ def draw_battle():
 # LOOP
 # ==================================
 
-running=True
+running = True
 
 while running:
 
@@ -381,10 +381,14 @@ while running:
 
     for event in pygame.event.get():
 
-        if event.type==pygame.QUIT:
-            running=False
+        if event.type == pygame.QUIT:
+            running = False
 
-        if event.type==pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
+
+            # ======================
+            # MENU
+            # ======================
 
             if scene=="menu":
 
@@ -395,6 +399,10 @@ while running:
                     running=False
 
 
+            # ======================
+            # SELECCIÓN
+            # ======================
+
             elif scene=="selection":
 
                 if event.key==pygame.K_LEFT:
@@ -402,54 +410,6 @@ while running:
 
                 elif event.key==pygame.K_RIGHT:
                     selected=(selected+1)%len(options)
-
-                if event.key==pygame.K_p:
-
-                    result=use_potion(
-                        player,
-                        "small"
-                    )
-
-                    if result=="used":
-                        battle_log="Poción pequeña usada"
-
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
-
-                    elif result=="full_hp":
-                        battle_log="HP completo"
-
-                elif event.key==pygame.K_o:
-
-                    result=use_potion(
-                        player,
-                        "medium"
-                    )
-
-                    if result=="used":
-                        battle_log="Poción mediana usada"
-
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
-
-                    elif result=="full_hp":
-                        battle_log="HP completo"
-
-                elif event.key==pygame.K_i:
-
-                    result=use_potion(
-                        player,
-                        "large"
-                    )
-
-                    if result=="used":
-                        battle_log="Poción grande usada"
-
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
-
-                    elif result=="full_hp":
-                        battle_log="HP completo"
 
                 elif event.key==pygame.K_RETURN:
 
@@ -472,6 +432,11 @@ while running:
                     )
 
                     scene="world"
+
+
+            # ======================
+            # WORLD
+            # ======================
 
             elif scene=="world":
 
@@ -514,6 +479,11 @@ while running:
 
                     scene="battle"
 
+
+            # ======================
+            # SHOP
+            # ======================
+
             elif scene=="shop":
 
                 keys=list(
@@ -540,63 +510,75 @@ while running:
                         keys[shop_selected]
                     )
 
-            if event.key==pygame.K_p:
 
-                 result=use_potion(
-                 player,
-                 "small"
-                    )
-
-            if result=="used":
-                battle_log="Poción pequeña usada"
-
-            elif result=="empty":
-                battle_log="No tienes pociones"
-
-            elif result=="full_hp":
-                battle_log="HP completo"
-
-
-
-            elif event.key==pygame.K_o:
-
-              result=use_potion(
-              player,
-              "medium"
-              )
-
-            if result=="used":
-               battle_log="Poción mediana usada"
-
-            elif result=="empty":
-               battle_log="No tienes pociones"
-
-            elif result=="full_hp":
-               battle_log="HP completo"
-
-
-
-            elif event.key==pygame.K_i:
-
-                result=use_potion(
-                player,
-                "large"
-                   )
-
-            if result=="used":
-               battle_log="Poción grande usada"
-
-            elif result=="empty":
-               battle_log="No tienes pociones"
-
-            elif result=="full_hp":
-               battle_log="HP completo"
-
+            # ======================
+            # BATALLA
+            # ======================
 
             elif scene=="battle":
 
                 if event.key==pygame.K_ESCAPE:
                     scene="world"
+
+
+                # Poción pequeña
+
+                elif event.key==pygame.K_p:
+
+                    result=use_potion(
+                        player,
+                        "small"
+                    )
+
+                    if result=="used":
+                        battle_log="Poción pequeña usada"
+
+                    elif result=="empty":
+                        battle_log="No tienes pociones"
+
+                    elif result=="full_hp":
+                        battle_log="HP completo"
+
+
+                # Poción mediana
+
+                elif event.key==pygame.K_o:
+
+                    result=use_potion(
+                        player,
+                        "medium"
+                    )
+
+                    if result=="used":
+                        battle_log="Poción mediana usada"
+
+                    elif result=="empty":
+                        battle_log="No tienes pociones"
+
+                    elif result=="full_hp":
+                        battle_log="HP completo"
+
+
+                # Poción grande
+
+                elif event.key==pygame.K_i:
+
+                    result=use_potion(
+                        player,
+                        "large"
+                    )
+
+                    if result=="used":
+                        battle_log="Poción grande usada"
+
+                    elif result=="empty":
+                        battle_log="No tienes pociones"
+
+                    elif result=="full_hp":
+                        battle_log="HP completo"
+
+
+                # Ataque
 
                 elif event.key==pygame.K_RETURN:
 
@@ -607,6 +589,11 @@ while running:
                             enemy
                         )
 
+                        battle_log=(
+                            f"{player['nombre']} hizo "
+                            f"{dmg} daño"
+                        )
+
                         if is_defeated(enemy):
 
                             add_exp(
@@ -614,7 +601,11 @@ while running:
                                 30
                             )
 
-                            player["monedas"]+=15
+                            player["monedas"] += 15
+
+                            battle_log=(
+                                f"{enemy['nombre']} derrotado"
+                            )
 
                             scene="world"
 
@@ -628,13 +619,26 @@ while running:
                             player
                         )
 
+                        battle_log=(
+                            f"{enemy['nombre']} hizo "
+                            f"{dmg} daño"
+                        )
+
                         if is_defeated(player):
+
+                            battle_log=(
+                                f"{player['nombre']} derrotado"
+                            )
+
                             scene="menu"
 
                         else:
                             turn="player"
 
 
+    # ======================
+    # DIBUJADO
+    # ======================
 
     if scene=="menu":
         draw_menu()
@@ -657,7 +661,6 @@ while running:
         )
 
     pygame.display.flip()
-
 
 pygame.quit()
 sys.exit()
