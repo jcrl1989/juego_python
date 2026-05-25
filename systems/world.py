@@ -19,6 +19,36 @@ WORLD_ZONES = {
 }
 
 
+TILE_SIZE = 50
+
+WORLD_MAP = [
+
+    ["tree","tree","tree","tree","tree","tree","tree","tree","tree","tree"],
+
+    ["tree","grass","grass","path","grass","grass","grass","grass","grass","tree"],
+
+    ["tree","grass","path","path","path","grass","grass","rock","grass","tree"],
+
+    ["tree","grass","grass","grass","path","grass","grass","grass","grass","tree"],
+
+    ["tree","rock","grass","grass","path","grass","rock","grass","grass","tree"],
+
+    ["tree","grass","grass","grass","path","grass","grass","grass","grass","tree"],
+
+    ["tree","grass","grass","grass","path","grass","grass","grass","grass","tree"],
+
+    ["tree","tree","tree","tree","tree","tree","tree","tree","tree","tree"]
+
+]
+
+
+def can_move(tile):
+
+    blocked = ["tree", "rock"]
+
+    return tile not in blocked
+
+
 def random_encounter(chance=0.03):
     return random.random() < chance
 

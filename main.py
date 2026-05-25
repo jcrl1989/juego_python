@@ -19,7 +19,10 @@ from systems.world import (
     random_encounter,
     get_zone_name,
     get_enemy_level,
-    update_zone
+    update_zone,
+    WORLD_MAP,
+    TILE_SIZE,
+    can_move
 )
 
 from systems.shop import (
@@ -77,8 +80,8 @@ turn = "player"
 
 # WORLD
 
-world_x = 600
-world_y = 350
+player_row = 2
+player_col = 2
 
 current_zone = 1
 
@@ -205,30 +208,94 @@ def draw_selection():
 
 def draw_world():
 
-    screen.fill((40,120,70))
+    screen.fill((50,80,50))
 
-    draw_center(
+    colors = {
+
+        "tree": (20,90,20),
+        "grass": (80,170,80),
+        "path": (180,150,90),
+        "rock": (120,120,120)
+
+    }
+
+
+    # Dibujar mapa
+    for row in range(len(WORLD_MAP)):
+
+        for col in range(len(WORLD_MAP[row])):
+
+            tile = WORLD_MAP[row][col]
+
+            x = col*TILE_SIZE + 350
+            y = row*TILE_SIZE + 150
+
+            pygame.draw.rect(
+
+                screen,
+                colors[tile],
+                (x,y,TILE_SIZE,TILE_SIZE)
+            )
+
+            pygame.draw.rect(
+
+                screen,
+                (0,0,0),
+                (x,y,TILE_SIZE,TILE_SIZE),
+                1
+            )
+
+
+    # Avatar jugador
+
+    px = player_col*TILE_SIZE + 350
+    py = player_row*TILE_SIZE + 150
+
+
+    # cabeza
+    pygame.draw.circle(
+
         screen,
-        "MUNDO DIGITAL",
-        cfg.FONT_BIG,
-        cfg.WHITE,
-        30
+        (255,220,180),
+        (px+25,py+15),
+        12
     )
 
+
+    # cuerpo
     pygame.draw.rect(
+
         screen,
-        (255,220,80),
-        (world_x,world_y,40,40)
+        (50,120,255),
+        (px+15,py+25,20,20)
     )
+
+
+    # ojos
+    pygame.draw.circle(
+        screen,
+        (0,0,0),
+        (px+21,py+12),
+        2
+    )
+
+    pygame.draw.circle(
+        screen,
+        (0,0,0),
+        (px+29,py+12),
+        2
+    )
+
 
     draw_text(
         screen,
-        f"{player['nombre']}",
+        f"Digimon: {player['nombre']}",
         cfg.FONT_SMALL,
         cfg.WHITE,
         40,
         150
     )
+
 
     draw_text(
         screen,
@@ -239,14 +306,6 @@ def draw_world():
         190
     )
 
-    draw_text(
-        screen,
-        f"HP: {player['hp']}/{player['hp_max']}",
-        cfg.FONT_SMALL,
-        cfg.WHITE,
-        40,
-        230
-    )
 
     draw_text(
         screen,
@@ -254,8 +313,9 @@ def draw_world():
         cfg.FONT_SMALL,
         cfg.WHITE,
         40,
-        270
+        230
     )
+
 
     draw_text(
         screen,
@@ -263,8 +323,9 @@ def draw_world():
         cfg.FONT_SMALL,
         cfg.WHITE,
         40,
-        310
+        270
     )
+
 
     draw_center(
         screen,
@@ -273,7 +334,6 @@ def draw_world():
         cfg.WHITE,
         680
     )
-
 
 # ==================================
 # BATALLA
@@ -442,31 +502,86 @@ while running:
 
                  speed=15
 
-                 if event.key==pygame.K_w:
-                    world_y-=speed
+                 new_row = player_row
+                 new_col = player_col
 
-            elif event.key==pygame.K_s:
-                    world_y+=speed
+            if event.key == pygame.K_w:
+               new_row -= 1
 
-            elif event.key==pygame.K_a:
-                 world_x-=speed
+            elif event.key == pygame.K_s:
+                new_row += 1
 
-            elif event.key==pygame.K_d:
-                 world_x+=speed
+            elif event.key == pygame.K_a:
+                new_col -= 1
 
-            elif event.key==pygame.K_t:
-                 scene="shop"
+            elif event.key == pygame.K_d:
+                new_col += 1
 
-            elif event.key==pygame.K_ESCAPE:
-                 scene="menu"
+            elif event.key == pygame.K_t:
+                scene = "shop"
+
+            elif event.key == pygame.K_ESCAPE:
+               scene = "menu"
 
 
-                 current_zone=update_zone(
+            if (
+                 0 <= new_row < len(WORLD_MAP)
+                 and
+                 0 <= new_col < len(WORLD_MAP[0])
+                ):
+
+                 tile = WORLD_MAP[
+                    new_row
+                        ][
+                    new_col
+                    ]
+
+                 if can_move(tile):
+
+                   player_row = new_row
+                   player_col = new_col
+
+
+        current_zone = update_zone(
+            player["nivel"]
+        )
+
+
+    if tile=="grass":
+
+            if random_encounter():
+
+                enemy = create_enemy(
+                    ENEMIES[
+                        get_enemy_level(
+                            current_zone
+                        )
+                    ]
+                )
+
+                enemy_sprite = load_sprite(
+                    enemy["nombre"]
+                )
+
+                player_sprite = load_sprite(
+                    player["nombre"]
+                )
+
+                turn = "player"
+
+                battle_log = (
+                    "¡Un Digimon salvaje apareció!"
+                )
+
+                scene = "battle"
+
+
+    current_zone=update_zone(
                   player["nivel"]
                          )
 
 
-                 if random_encounter():
+    if random_encounter():
 
                     enemy=create_enemy(
                           ENEMIES[
@@ -489,26 +604,26 @@ while running:
             # SHOP
             # ======================
 
-            elif scene=="shop":
+    elif scene=="shop":
 
-                keys=list(
-                    POTIONS.keys()
+         keys=list(
+             POTIONS.keys()
                 )
 
-                if event.key==pygame.K_ESCAPE:
+    if event.key==pygame.K_ESCAPE:
                     scene="world"
 
-                elif event.key==pygame.K_UP:
-                    shop_selected=(
-                        shop_selected-1
-                    )%len(keys)
+    elif event.key==pygame.K_UP:
+           shop_selected=(
+             shop_selected-1
+                   )%len(keys)
 
-                elif event.key==pygame.K_DOWN:
+    elif event.key==pygame.K_DOWN:
                     shop_selected=(
                         shop_selected+1
                     )%len(keys)
 
-                elif event.key==pygame.K_RETURN:
+    elif event.key==pygame.K_RETURN:
 
                     buy_potion(
                         player,
@@ -520,7 +635,7 @@ while running:
             # BATALLA
             # ======================
 
-            elif scene=="battle":
+    elif scene=="battle":
 
                 if event.key==pygame.K_ESCAPE:
                     scene="world"
