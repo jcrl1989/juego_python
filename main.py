@@ -440,40 +440,45 @@ while running:
 
             elif scene=="world":
 
-                speed=15
+                 speed=15
 
-                if event.key==pygame.K_w:
+                 if event.key==pygame.K_w:
                     world_y-=speed
 
-                elif event.key==pygame.K_s:
+            elif event.key==pygame.K_s:
                     world_y+=speed
 
-                elif event.key==pygame.K_a:
-                    world_x-=speed
+            elif event.key==pygame.K_a:
+                 world_x-=speed
 
-                elif event.key==pygame.K_d:
-                    world_x+=speed
+            elif event.key==pygame.K_d:
+                 world_x+=speed
 
-                elif event.key==pygame.K_t:
-                    scene="shop"
+            elif event.key==pygame.K_t:
+                 scene="shop"
 
-                current_zone=update_zone(
-                    player["nivel"]
-                )
+            elif event.key==pygame.K_ESCAPE:
+                 scene="menu"
 
-                if random_encounter():
+
+                 current_zone=update_zone(
+                  player["nivel"]
+                         )
+
+
+                 if random_encounter():
 
                     enemy=create_enemy(
-                        ENEMIES[
-                            get_enemy_level(
-                                current_zone
+                          ENEMIES[
+                           get_enemy_level(
+                         current_zone
                             )
-                        ]
-                    )
+                      ]
+                      )
 
                     enemy_sprite=load_sprite(
-                        enemy["nombre"]
-                    )
+                          enemy["nombre"]
+                      )
 
                     turn="player"
 
