@@ -286,6 +286,7 @@ def draw_world():
         2
     )
 
+if player:
 
     draw_text(
         screen,
@@ -296,7 +297,6 @@ def draw_world():
         150
     )
 
-
     draw_text(
         screen,
         f"Nivel: {player['nivel']}",
@@ -305,7 +305,6 @@ def draw_world():
         40,
         190
     )
-
 
     draw_text(
         screen,
@@ -542,9 +541,11 @@ while running:
                    player_col = new_col
 
 
-        current_zone = update_zone(
-            player["nivel"]
-        )
+            if player is not None:
+
+                    current_zone = update_zone(
+                    player["nivel"]
+                     )
 
 
     if tile=="grass":
