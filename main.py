@@ -443,188 +443,169 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
+
+        elif event.type == pygame.KEYDOWN:
 
             # ======================
             # MENU
             # ======================
 
-            if scene=="menu":
+            if scene == "menu":
 
-                if event.key==pygame.K_RETURN:
-                    scene="selection"
+                if event.key == pygame.K_RETURN:
+                    scene = "selection"
 
-                elif event.key==pygame.K_ESCAPE:
-                    running=False
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
 
 
             # ======================
-            # SELECCIÓN
+            # SELECCION
             # ======================
 
-            elif scene=="selection":
+            elif scene == "selection":
 
-                if event.key==pygame.K_LEFT:
-                    selected=(selected-1)%len(options)
+                if event.key == pygame.K_LEFT:
+                    selected = (selected - 1) % len(options)
 
-                elif event.key==pygame.K_RIGHT:
-                    selected=(selected+1)%len(options)
+                elif event.key == pygame.K_RIGHT:
+                    selected = (selected + 1) % len(options)
 
-                elif event.key==pygame.K_RETURN:
+                elif event.key == pygame.K_RETURN:
 
-                    player=copy.deepcopy(
+                    player = copy.deepcopy(
                         PLAYER_DIGIMON[
                             options[selected]
                         ]
                     )
 
-                    player["nombre"]=options[selected]
+                    player["nombre"] = options[selected]
 
-                    player["inventory"]={
+                    player["inventory"] = {
+
                         "small":0,
                         "medium":0,
                         "large":0
                     }
 
-                    player_sprite=load_sprite(
+                    player_sprite = load_sprite(
                         player["nombre"]
                     )
 
-                    scene="world"
+                    scene = "world"
 
 
             # ======================
             # WORLD
             # ======================
 
-            elif scene=="world":
+            elif scene == "world":
 
-                 speed=15
-
-                 new_row = player_row
-                 new_col = player_col
-
-            if event.key == pygame.K_w:
-               new_row -= 1
-
-            elif event.key == pygame.K_s:
-                new_row += 1
-
-            elif event.key == pygame.K_a:
-                new_col -= 1
-
-            elif event.key == pygame.K_d:
-                new_col += 1
-
-            elif event.key == pygame.K_t:
-                scene = "shop"
-
-            elif event.key == pygame.K_ESCAPE:
-               scene = "menu"
+                new_row = player_row
+                new_col = player_col
 
 
-            if (
-                 0 <= new_row < len(WORLD_MAP)
-                 and
-                 0 <= new_col < len(WORLD_MAP[0])
+                if event.key == pygame.K_w:
+                    new_row -= 1
+
+                elif event.key == pygame.K_s:
+                    new_row += 1
+
+                elif event.key == pygame.K_a:
+                    new_col -= 1
+
+                elif event.key == pygame.K_d:
+                    new_col += 1
+
+                elif event.key == pygame.K_t:
+                    scene = "shop"
+
+                elif event.key == pygame.K_ESCAPE:
+                    scene = "menu"
+
+
+                if (
+                    0 <= new_row < len(WORLD_MAP)
+                    and
+                    0 <= new_col < len(WORLD_MAP[0])
                 ):
 
-                 tile = WORLD_MAP[
-                    new_row
-                        ][
-                    new_col
+                    tile = WORLD_MAP[
+                        new_row
+                    ][
+                        new_col
                     ]
 
-                 if can_move(tile):
+                    if can_move(tile):
 
-                   player_row = new_row
-                   player_col = new_col
-
-
-            if player is not None:
-
-                    current_zone = update_zone(
-                    player["nivel"]
-                     )
+                        player_row = new_row
+                        player_col = new_col
 
 
-    if tile=="grass":
+                        if player:
 
-            if random_encounter():
-
-                enemy = create_enemy(
-                    ENEMIES[
-                        get_enemy_level(
-                            current_zone
-                        )
-                    ]
-                )
-
-                enemy_sprite = load_sprite(
-                    enemy["nombre"]
-                )
-
-                player_sprite = load_sprite(
-                    player["nombre"]
-                )
-
-                turn = "player"
-
-                battle_log = (
-                    "¡Un Digimon salvaje apareció!"
-                )
-
-                scene = "battle"
-
-
-    current_zone=update_zone(
-                  player["nivel"]
-                         )
-
-
-    if random_encounter():
-
-                    enemy=create_enemy(
-                          ENEMIES[
-                           get_enemy_level(
-                         current_zone
+                            current_zone = update_zone(
+                                player["nivel"]
                             )
-                      ]
-                      )
 
-                    enemy_sprite=load_sprite(
-                          enemy["nombre"]
-                      )
 
-                    turn="player"
+                            if (
+                                tile == "grass"
+                                and random_encounter()
+                            ):
 
-                    scene="battle"
+                                enemy = create_enemy(
+
+                                    ENEMIES[
+                                        get_enemy_level(
+                                            current_zone
+                                        )
+                                    ]
+                                )
+
+                                enemy_sprite = load_sprite(
+                                    enemy["nombre"]
+                                )
+
+                                player_sprite = load_sprite(
+                                    player["nombre"]
+                                )
+
+                                turn = "player"
+
+                                battle_log = (
+                                    "¡Un Digimon salvaje apareció!"
+                                )
+
+                                scene = "battle"
 
 
             # ======================
             # SHOP
             # ======================
 
-    elif scene=="shop":
+            elif scene == "shop":
 
-         keys=list(
-             POTIONS.keys()
+                keys = list(
+                    POTIONS.keys()
                 )
 
-    if event.key==pygame.K_ESCAPE:
-                    scene="world"
+                if event.key == pygame.K_ESCAPE:
+                    scene = "world"
 
-    elif event.key==pygame.K_UP:
-           shop_selected=(
-             shop_selected-1
-                   )%len(keys)
+                elif event.key == pygame.K_UP:
 
-    elif event.key==pygame.K_DOWN:
-                    shop_selected=(
-                        shop_selected+1
-                    )%len(keys)
+                    shop_selected = (
+                        shop_selected - 1
+                    ) % len(keys)
 
-    elif event.key==pygame.K_RETURN:
+                elif event.key == pygame.K_DOWN:
+
+                    shop_selected = (
+                        shop_selected + 1
+                    ) % len(keys)
+
+                elif event.key == pygame.K_RETURN:
 
                     buy_potion(
                         player,
@@ -636,81 +617,73 @@ while running:
             # BATALLA
             # ======================
 
-    elif scene=="battle":
+            elif scene == "battle":
 
-                if event.key==pygame.K_ESCAPE:
-                    scene="world"
+                if event.key == pygame.K_ESCAPE:
+                    scene = "world"
 
 
-                # Poción pequeña
+                elif event.key == pygame.K_p:
 
-                elif event.key==pygame.K_p:
-
-                    result=use_potion(
+                    result = use_potion(
                         player,
                         "small"
                     )
 
-                    if result=="used":
-                        battle_log="Poción pequeña usada"
+                    if result == "used":
+                        battle_log = "Poción pequeña usada"
 
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
+                    elif result == "empty":
+                        battle_log = "No tienes pociones"
 
-                    elif result=="full_hp":
-                        battle_log="HP completo"
+                    elif result == "full_hp":
+                        battle_log = "HP completo"
 
 
-                # Poción mediana
+                elif event.key == pygame.K_o:
 
-                elif event.key==pygame.K_o:
-
-                    result=use_potion(
+                    result = use_potion(
                         player,
                         "medium"
                     )
 
-                    if result=="used":
-                        battle_log="Poción mediana usada"
+                    if result == "used":
+                        battle_log = "Poción mediana usada"
 
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
+                    elif result == "empty":
+                        battle_log = "No tienes pociones"
 
-                    elif result=="full_hp":
-                        battle_log="HP completo"
+                    elif result == "full_hp":
+                        battle_log = "HP completo"
 
 
-                # Poción grande
+                elif event.key == pygame.K_i:
 
-                elif event.key==pygame.K_i:
-
-                    result=use_potion(
+                    result = use_potion(
                         player,
                         "large"
                     )
 
-                    if result=="used":
-                        battle_log="Poción grande usada"
+                    if result == "used":
+                        battle_log = "Poción grande usada"
 
-                    elif result=="empty":
-                        battle_log="No tienes pociones"
+                    elif result == "empty":
+                        battle_log = "No tienes pociones"
 
-                    elif result=="full_hp":
-                        battle_log="HP completo"
+                    elif result == "full_hp":
+                        battle_log = "HP completo"
 
 
-                # Ataque
+                elif event.key == pygame.K_RETURN:
 
-                elif event.key==pygame.K_RETURN:
+                    if turn == "player":
 
-                    if turn=="player":
-
-                        dmg=player_attack(
+                        dmg = player_attack(
                             player,
                             enemy
                         )
 
-                        battle_log=(
+                        battle_log = (
                             f"{player['nombre']} hizo "
                             f"{dmg} daño"
                         )
@@ -724,38 +697,38 @@ while running:
 
                             player["monedas"] += 15
 
-                            battle_log=(
+                            battle_log = (
                                 f"{enemy['nombre']} derrotado"
                             )
 
-                            scene="world"
+                            scene = "world"
 
                         else:
-                            turn="enemy"
+                            turn = "enemy"
+
 
                     else:
 
-                        dmg=enemy_attack(
+                        dmg = enemy_attack(
                             enemy,
                             player
                         )
 
-                        battle_log=(
+                        battle_log = (
                             f"{enemy['nombre']} hizo "
                             f"{dmg} daño"
                         )
 
                         if is_defeated(player):
 
-                            battle_log=(
+                            battle_log = (
                                 f"{player['nombre']} derrotado"
                             )
 
-                            scene="menu"
+                            scene = "menu"
 
                         else:
-                            turn="player"
-
+                            turn = "player"
 
     # ======================
     # DIBUJADO
